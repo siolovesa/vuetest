@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="./lib/vue.js"></script>
+    <style>
+      [cloak] {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 解决差值表达式闪烁问题 -->
+      <p v-cloak>{{ msg }}</p>
+
+      <!-- 覆盖html内容 -->
+      <h4 v-text="msg">121313</h4>
+
+      <div v-html="msg2"></div>
+      <!-- v-bind vue中提供绑定属性的指令 -->
+      <input type="button" value="button" v-bind:title="myTitle" />
+
+      <!-- v-bind 可以写合法的js表达式 -->
+      <input type="button" value="button" :title="myTitle + 123" />
+      <!-- v-on 绑定 -->
+      <input
+        type="button"
+        value="button"
+        :title="myTitle + 123"
+        v-on:click="show"
+      />
+      <!-- 差值表达式 和 v-text -->
+      <!-- v-cloak -->
+      <!-- v-text -->
+      <!-- v-html -->
+      <!-- 差值表达式 和 v-text -->
+      <!-- v-bind 缩写 : -->
+      <!-- v-on 缩写 @ -->
+    </div>
+    <script>
+      var vm = new Vue({
+        el: "#app",
+        data: {
+          msg: "1122",
+          msg2: "<h1>XXXXXXXX</h1>",
+          myTitle: "自己定义的title"
+        },
+        methods: {
+          // 定义当前vue的方法
+          show() {
+            alert(1);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
