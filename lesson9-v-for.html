@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script src="./lib/vue.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <!-- v-for 遍历数组 -->
+      <div>
+        <p>{{ list[0] }}</p>
+        <span v-for="item in list">
+          {{ item }}
+        </span>
+        <br />
+        <p v-for="(item, index) in list">
+          [索引值：{{ index }}] -----{{ item }}
+        </p>
+      </div>
+      <!-- v-for 遍历数组对象 -->
+      <div>
+        <p v-for="(item,index) in objArray">
+          {{ item.id }}:
+          {{ item.name }}
+        </p>
+      </div>
+      <!-- v-for 遍历对象 -->
+      <!-- 遍历对象时，有 值val，键key，索引index -->
+      <div>
+        <p v-for="(value, key, i) in obj">
+          索引：{{ i }} --- 键：{{ key }} --- 值：{{ value }}
+        </p>
+      </div>
+      <!-- v-for in 后面可以放 数组，对象数组，对象，数字 -->
+      <div>
+        <p v-for="count in 10">这是第 {{ count }}次循环</p>
+      </div>
+    </div>
+    <script>
+      // 导入vue后，浏览器内存中，多了一个vue构造函数
+      var vm = new Vue({
+        el: "#app",
+        data: {
+          msg: "hello world",
+          list: [1, 2, 3, 4, 5],
+          objArray: [
+            { id: 1, name: "232131" },
+            { id: 2, name: "1222" },
+            { id: 3, name: "4324" },
+            { id: 4, name: "23423423" }
+          ],
+          obj: {
+            name: "sdad",
+            sex: "nv",
+            age: 18
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
