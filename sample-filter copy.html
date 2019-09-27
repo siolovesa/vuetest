@@ -49,16 +49,13 @@
           <tr v-for="item in search(keywords)" :key="item.id">
             <td>{{ item.id }}</td>
             <td v-text="item.name"></td>
-            <td>{{ item.time | formatTime }}</td>
+            <td>{{ item.time }}</td>
             <td><a @click.prevent="del(item.id)">删除</a></td>
           </tr>
         </tbody>
       </table>
     </div>
     <script>
-      Vue.filter("formatTime", function(time) {
-        // 根据给定的时间字符串，得到特定的时间
-      });
       // 导入vue后，浏览器内存中，多了一个vue构造函数
       var vm = new Vue({
         el: "#app",
@@ -128,6 +125,9 @@
           }
         }
       });
+
+      // Vue.filter("过滤器名称", function() {});
     </script>
   </body>
 </html>
+<!-- 过滤器调用时的格式 {{name| 过滤器名称}} -->
