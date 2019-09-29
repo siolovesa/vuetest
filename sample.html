@@ -19,7 +19,12 @@
             >ID <input type="text" class="form-control" v-model="id"
           /></label>
           <label
-            >name <input type="text" class="form-control" v-model="name"
+            >name
+            <input
+              type="text"
+              class="form-control"
+              v-model="name"
+              @keyup.f2="add"
           /></label>
           <!-- vue中，使用事件绑定机制,为元素指定处理函数的时候，如果加了小括号，就可以给函数传参 -->
           <input
@@ -28,9 +33,17 @@
             class="btn btn-primary btn-sm"
             @click="add"
           />
+          <!-- 按键修饰符 enter，tab，delete（捕获删除或退格），esc，space，up，down，left，right，所有键盘码值-->
           <label
-            >search <input type="text" class="form-control" v-model="keywords"
+            >search
+            <input
+              type="text"
+              class="form-control"
+              v-color="'blue'"
+              v-focus
+              v-model="keywords"
           /></label>
+          <!-- 注意： Vue中所有的指令 -->
         </div>
       </div>
 
@@ -55,10 +68,81 @@
         </tbody>
       </table>
     </div>
+    <div id="app2">
+      <p v-color="'pink'" v-fontweight="600" v-fontsize="18">
+        {{ time | formatTime("yyyy-mm-dd") }}
+      </p>
+    </div>
     <script>
-      Vue.filter("formatTime", function(time) {
+      // 所谓的全局过滤器, 所有的VM实例都可以使用
+      Vue.filter("formatTime", function(dateStr, pattern = "") {
         // 根据给定的时间字符串，得到特定的时间
+        let dt = new Date(dateStr);
+        const y = dt.getFullYear();
+        const m = (dt.getMonth() + 1).toString().padStart(2, "0");
+        const d = dt
+          .getDate()
+          .toString()
+          .padStart(2, "0");
+
+        // string.prototype.padStart(maxLength, fillString='') 头部开始填充
+        // string.prototype.padEnd(maxLength, fillString='') 尾部开始填充
+
+        if (pattern.toLowerCase() === "yyyy-mm-dd") {
+          return `${y}-${m}-${d}`;
+        } else {
+          const hh = dt
+            .getHours()
+            .toString()
+            .padStart(2, "0");
+          const mm = dt
+            .getMinutes()
+            .toString()
+            .padStart(2, "0");
+          const ss = dt
+            .getSeconds()
+            .toString()
+            .padStart(2, "0");
+          return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+        }
       });
+
+      // 自定全局按键修饰符
+      Vue.config.keyCodes.f2 = 113;
+
+      // 使用 Vue.directive() 定义全局的指令
+      // 其中：参数1: 指令的名称，注意在定义的时候，指令的名称前面不需要加v- 前缀
+      // 但是，调用的时候 必须在指令名称前面加上 v- 前缀进行调用
+      // 参数2：是一个对象，这个对象身上有一些指令相关的函数,可以在特定的阶段执行相关操作
+
+      Vue.directive("focus", {
+        bind: function(el) {
+          // 每当指令绑定到元素上的时候，会立即执行bind 函数，只执行一次
+          // 注意：每个函数中，第一个参数，永远是el，表示被绑定了指令的那个元素,这个el 是一个原生的js对象
+          // 在元素 刚绑定了指令的时候，还没有插入到DOM中去，这时候，调用focus方法没有作用
+          // 因为一个元素只有插入DOM之后 才能获取焦点
+          // el.focus();
+        },
+        inserted: function(el) {
+          // inserted 表示元素插入到DOM中的时候，会执行 inserted 函数【触发一次】
+          el.focus();
+          // 和JS行为有关的操作，最后在 inserted 中去执行，防止行为不生效
+        },
+        updated: function(el) {
+          // 当VNode更新的时候，会执行 updated 可能会触发多次
+        }
+      });
+
+      Vue.directive("color", {
+        // 样式，只要通过指令绑定给了元素，不管这个元素有没有被插入到页面中去，这个元素肯定有了一个内联的样式
+        // 将来元素肯定会显示到页面中去，这时候，浏览器的渲染殷勤必然会解释样式，应用给这个元素
+        bind: function(el, binding) {
+          console.log(binding);
+          el.style.color = binding.value;
+          // 和样式相关的操作，一般都在bind中
+        }
+      });
+
       // 导入vue后，浏览器内存中，多了一个vue构造函数
       var vm = new Vue({
         el: "#app",
@@ -125,6 +209,59 @@
                 return item;
               }
             });
+          }
+        }
+      });
+
+      // 如何自定义一个私有的过滤器（局部）
+      var vm2 = new Vue({
+        el: "#app2",
+        data: {
+          time: new Date()
+        },
+        methods: {},
+        filters: {
+          // 定义私有过滤器，过滤器有2个条件 【名称 和处理函数】
+          // 过滤器调用的时候，才用就近原则，如果私有过滤器与全局过滤器名称一致了，优先调用私有过滤器
+          formatTime: function(dateStr, pattern = "") {
+            let dt = new Date(dateStr);
+            const y = dt.getFullYear();
+            const m = (dt.getMonth() + 1).toString().padStart(2, "0");
+            const d = dt
+              .getDate()
+              .toString()
+              .padStart(2, "0");
+            const hh = dt
+              .getHours()
+              .toString()
+              .padStart(2, "0");
+            const mm = dt
+              .getMinutes()
+              .toString()
+              .padStart(2, "0");
+            const ss = dt
+              .getSeconds()
+              .toString()
+              .padStart(2, "0");
+
+            if (pattern.toLowerCase() === "yyyy-mm-dd") {
+              return `${y}-${m}-${d}`;
+            } else {
+              return `${y}-${m}-${d} ${hh}:${mm}:${ss}`;
+            }
+          }
+        },
+
+        directives: {
+          fontweight: {
+            bind: function(el, binding) {
+              el.style.fontWeight = binding.value;
+            }
+          },
+
+          fontsize: function(el, binding) {
+            // 注意，这个function 等于把代码写到bind 和 update中去
+            el.style.fontSize = parseInt(binding.value) + "px";
           }
         }
       });
