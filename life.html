@@ -10,6 +10,7 @@
 
   <body>
     <div id="app">
+      <input type="button" value="click" @click="msg='No'" />
       <p id="h3">{{ msg }}</p>
     </div>
     <script>
@@ -45,9 +46,28 @@
         },
         mounted() {
           // 第四个生命周期，表示，内存中的模板已经真实挂载到页面中，用户已经可以看到渲染好的页面了
-          console.log(document.getElementById("h3").innerText);
+          // console.log(document.getElementById("h3").innerText);
           //   注意：mounted 是 实例创建期间的最后一个生命周期函数，当执行完mounted 就表示实例
           // 已经被完全创建好了，此时，如果没有其它操作，这个实例就静静的躺在我们内存中，一动不动
+        },
+
+        // 接下来是运行中的2个事件
+        beforeUpdate() {
+          // 这时候 表示我们界面还没有被更新 【数据已经被更新了】
+          // console.log(
+          //   "界面上元素中的内容" + document.getElementById("h3").innerText
+          // );
+          // console.log("data中的msg数据是" + this.msg);
+          // 得出结论：当执行beforeUpdate 的时候，页面中显示的数据还是旧的
+          // data数据是最新的，页面尚未和最新的数据保持同步
+        },
+
+        updated() {
+          console.log(
+            "界面上元素中的内容" + document.getElementById("h3").innerText
+          );
+          console.log("data中的msg数据是" + this.msg);
+          // update 事件执行的时候，页面和data的数据已经保持同步了，都是最新的
         }
       });
     </script>
